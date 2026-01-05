@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>openlayers_zixingshi</title>
+    <link href="ol.css"rel="stylesheet"/>
+    <script src="ol.js"></script>
+</head>
+<body style="width: 100%;height: 600px;">
+    <div id="map" style="width: 100%;height: 100%;"></div>
+    <script>
+        var center=ol.proj.transform([113.2305536,25.9801706],'EPSG:4326','EPSG:3857');
+        // 创建样式
+        var style=new ol.style.Style({
+            image:new ol.style.Circle({
+                radius:20,
+                fill:new ol.style.Fill({
+                    color:"red"
+                })
+            })
+        })
+        // 创建要素，设置其样式
+        var feature = new ol.Feature({
+            geometry:new ol.geom.Point(ol.proj.transform([113.2305536,25.9801706],'EPSG:4326','EPSG:3857'))
+        });
+        feature.setStyle(style);
+        // 创建数据源，添加要素
+        var source = new ol.source.Vector();
+        source.addFeature(feature);
+        // 创建要素图层
+        var layer = new ol.layer.Vector({
+            source:source
+        })
+        // 创建地图，将要素图层加入其中
+        var map = new ol.Map({
+            target:'map',
+            layers:[
+                new ol.layer.Tile({
+                    source:new ol.source.XYZ({
+                        url:'https://t0.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=14f6dcb2a21bb9c6dbcf53180364af0b'
+                    }),
+                    isGroup:true,
+                    name:'天地图路网-卫星影像图'
+                }),
+                            new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    url: 'https://t0.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=14f6dcb2a21bb9c6dbcf53180364af0b'
+                }),
+                isGroup: true,
+                name: '天地图文字标注--卫星影像图'
+            }),
+                layer
+            ],
+            view:new ol.View({
+                projection:'EPSG:3857',
+                center:center,
+                zoom:10
+            })
+        });
+    </script>
+</body>
+</html>
